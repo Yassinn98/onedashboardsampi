@@ -228,14 +228,44 @@
         .session-thumbnail {
             width: 100%;
             height: 180px;
-            background: linear-gradient(135deg, var(--neutral-100) 0%, var(--neutral-200) 100%);
+            background-color: var(--neutral-100);
+            background-image: url('vodafone_app_dummy.png');
+            background-size: cover;
+            background-position: center;
             border-radius: 6px;
             margin-bottom: var(--spacing-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--neutral-400);
-            font-size: 48px;
+            position: relative;
+        }
+
+        .session-thumbnail::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+        }
+
+        .play-button {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--vodafone-red);
+            font-size: 20px;
+            z-index: 1;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .session-card:hover .play-button {
+            transform: scale(1.1);
+            background: white;
         }
 
         .session-info {
@@ -465,11 +495,13 @@
 
             <div class="sessions-grid">
                 <div class="session-card">
-                    <div class="session-thumbnail">▶</div>
+                    <div class="session-thumbnail">
+                        <div class="play-button">▶</div>
+                    </div>
                     <div class="session-info">
                         <div class="session-user">user_8f3d2a1b</div>
                         <div class="session-meta">
-                            <span>⏱ 12m 34s</span>
+                            <span>⏱ 30s</span>
                             <span>•</span>
                             <span>📱 iOS 16.2</span>
                         </div>
@@ -482,11 +514,13 @@
                 </div>
 
                 <div class="session-card">
-                    <div class="session-thumbnail">▶</div>
+                    <div class="session-thumbnail">
+                        <div class="play-button">▶</div>
+                    </div>
                     <div class="session-info">
                         <div class="session-user">user_5c9a7f2e</div>
                         <div class="session-meta">
-                            <span>⏱ 8m 15s</span>
+                            <span>⏱ 30s</span>
                             <span>•</span>
                             <span>📱 Android 13</span>
                         </div>
@@ -499,11 +533,13 @@
                 </div>
 
                 <div class="session-card">
-                    <div class="session-thumbnail">▶</div>
+                    <div class="session-thumbnail">
+                        <div class="play-button">▶</div>
+                    </div>
                     <div class="session-info">
                         <div class="session-user">user_2b4e6d8c</div>
                         <div class="session-meta">
-                            <span>⏱ 15m 42s</span>
+                            <span>⏱ 30s</span>
                             <span>•</span>
                             <span>📱 iOS 17.1</span>
                         </div>
@@ -516,11 +552,13 @@
                 </div>
 
                 <div class="session-card">
-                    <div class="session-thumbnail">▶</div>
+                    <div class="session-thumbnail">
+                        <div class="play-button">▶</div>
+                    </div>
                     <div class="session-info">
                         <div class="session-user">user_9a1c3f5b</div>
                         <div class="session-meta">
-                            <span>⏱ 6m 28s</span>
+                            <span>⏱ 30s</span>
                             <span>•</span>
                             <span>📱 Android 14</span>
                         </div>
@@ -533,11 +571,13 @@
                 </div>
 
                 <div class="session-card">
-                    <div class="session-thumbnail">▶</div>
+                    <div class="session-thumbnail">
+                        <div class="play-button">▶</div>
+                    </div>
                     <div class="session-info">
                         <div class="session-user">user_7e2d4a9f</div>
                         <div class="session-meta">
-                            <span>⏱ 11m 05s</span>
+                            <span>⏱ 30s</span>
                             <span>•</span>
                             <span>📱 iOS 16.5</span>
                         </div>
@@ -549,11 +589,13 @@
                 </div>
 
                 <div class="session-card">
-                    <div class="session-thumbnail">▶</div>
+                    <div class="session-thumbnail">
+                        <div class="play-button">▶</div>
+                    </div>
                     <div class="session-info">
                         <div class="session-user">user_3f8b1c6d</div>
                         <div class="session-meta">
-                            <span>⏱ 9m 52s</span>
+                            <span>⏱ 30s</span>
                             <span>•</span>
                             <span>📱 Android 12</span>
                         </div>
@@ -571,7 +613,7 @@
                     <span class="status-dot"></span>
                     <span>System Status: <strong>Operational</strong></span>
                 </div>
-                <div>&copy; 2026 Vodafone Analytics | Powered by GCP</div>
+                <div>&copy; 2026 SMAPI Analytics| Powered by GCP</div>
             </footer>
         </div>
     </div>
