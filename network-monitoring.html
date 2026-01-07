@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Monitoring | SMAPI OneDashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --neutral-50: #FAFAFA;
+            --neutral-100: #F5F5F5;
+            --neutral-200: #E5E5E5;
+            --neutral-300: #D4D4D4;
+            --neutral-400: #A3A3A3;
+            --neutral-600: #525252;
+            --neutral-700: #404040;
+            --neutral-900: #171717;
+            --vodafone-red: #E60000;
+            --vodafone-red-light: #FEF2F2;
+            --success: #10B981;
+            --success-light: #D1FAE5;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--neutral-50);
+            color: var(--neutral-900);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #FAFAFA 0%, #F5F5F5 100%);
+            border-right: 1px solid var(--neutral-200);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--neutral-200);
+            background: white;
+        }
+
+        .sidebar-logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .sidebar-logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--vodafone-red) 0%, #CC0000 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .sidebar-nav {
+            padding: var(--spacing-md);
+        }
+
+        .nav-section {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--neutral-600);
+            letter-spacing: 0.5px;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: 6px;
+            color: var(--neutral-700);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: var(--neutral-100);
+            color: var(--neutral-900);
+        }
+
+        .nav-item.active {
+            background: var(--vodafone-red-light);
+            color: var(--vodafone-red);
+            font-weight: 600;
+        }
+
+        .nav-item-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .nav-item-badge {
+            margin-left: auto;
+            background: var(--vodafone-red);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-xl);
+        }
+
+        .page-header {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--neutral-900);
+            margin-bottom: 4px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: var(--neutral-600);
+        }
+
+        .filters-bar {
+            background: white;
+            border: 1px solid var(--neutral-200);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+
+        .filter-group label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--neutral-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 10px 12px;
+            border: 1px solid var(--neutral-300);
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--vodafone-red);
+            box-shadow: 0 0 0 3px var(--vodafone-red-light);
+        }
+
+        .search-input {
+            flex: 1;
+            border: 1px solid var(--neutral-300);
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 14px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--vodafone-red);
+            box-shadow: 0 0 0 3px var(--vodafone-red-light);
+        }
+
+        .filters-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-sm);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--neutral-200);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid var(--neutral-300);
+            color: var(--neutral-700);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--vodafone-red);
+            color: var(--vodafone-red);
+            background: var(--vodafone-red-light);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            box-shadow: var(--shadow-md);
+        }
+
+        .chart-section {
+            background: white;
+            border: 1px solid var(--neutral-200);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--neutral-900);
+        }
+
+        .legend {
+            display: flex;
+            gap: var(--spacing-lg);
+            font-size: 13px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .table-section {
+            background: white;
+            border: 1px solid var(--neutral-200);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .table-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--neutral-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--neutral-900);
+        }
+
+        .results-count {
+            font-size: 14px;
+            color: var(--neutral-600);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--neutral-50);
+        }
+
+        th {
+            text-align: left;
+            padding: var(--spacing-md);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--neutral-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        td {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--neutral-200);
+            font-size: 14px;
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: var(--neutral-50);
+        }
+
+        .endpoint-path {
+            font-family: 'Courier New', monospace;
+            color: var(--neutral-900);
+            font-weight: 500;
+        }
+
+        .endpoint-method {
+            font-size: 11px;
+            color: var(--neutral-600);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-200 {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .status-404 {
+            background: var(--warning);
+            color: white;
+        }
+
+        .status-500 {
+            background: var(--vodafone-red-light);
+            color: var(--vodafone-red);
+        }
+
+        .latency {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .latency-good {
+            color: var(--success);
+        }
+
+        .latency-warning {
+            color: var(--warning);
+        }
+
+        .latency-bad {
+            color: var(--vodafone-red);
+        }
+
+        .play-icon {
+            color: var(--neutral-600);
+            cursor: pointer;
+            font-size: 16px;
+            transition: color 0.2s ease;
+        }
+
+        .play-icon:hover {
+            color: var(--vodafone-red);
+        }
+
+        .footer {
+            margin-top: var(--spacing-xl);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--neutral-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--neutral-600);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <img src="logo.png" alt="SMAPI" style="height: 40px; width: auto;">
+                <span>SMAPI OneDashboard</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <a href="index.html" class="nav-item"><svg class="nav-item-icon" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" />
+                        <rect x="14" y="3" width="7" height="7" />
+                        <rect x="14" y="14" width="7" height="7" />
+                        <rect x="3" y="14" width="7" height="7" />
+                    </svg><span>Overview</span></a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Analytics</div>
+                <a href="dashboard.html" class="nav-item"><svg class="nav-item-icon" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M3 3v18h18M7 16l4-4 4 4 6-6" />
+                    </svg><span>App Summary</span></a>
+                <a href="network-monitoring.html" class="nav-item active"><svg class="nav-item-icon" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
+                    </svg><span>Network Monitoring</span></a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Monitoring</div>
+                <a href="crash-reporting.html" class="nav-item"><svg class="nav-item-icon" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                        <line x1="12" y1="9" x2="12" y2="13" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
+                    </svg><span>Crash Reporting</span><span class="nav-item-badge">12</span></a>
+                <a href="session-replay.html" class="nav-item"><svg class="nav-item-icon" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polygon points="10 8 16 12 10 16 10 8" />
+                    </svg><span>Session Replay</span></a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">User Feedback</div>
+                <a href="in-app-ratings.html" class="nav-item"><svg class="nav-item-icon" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon
+                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg><span>In-App Ratings</span></a>
+                <a href="reported-bugs.html" class="nav-item"><svg class="nav-item-icon" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M8 2v4M16 2v4M12 11v6M8 11h8M6 6h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2z" />
+                        <circle cx="12" cy="14" r="1" />
+                    </svg><span>Reported Bugs</span><span class="nav-item-badge">5</span></a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Settings</div>
+                <a href="#" class="nav-item"><svg class="nav-item-icon" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3" />
+                        <path
+                            d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24" />
+                    </svg><span>Configuration</span></a>
+                <a href="#" class="nav-item"><svg class="nav-item-icon" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+                    </svg><span>Team</span></a>
+            </div>
+        </nav>
+    </aside>
+
+    <div class="main-wrapper">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Find & Discover (Network)</h1>
+                <p class="page-subtitle">Query and analyze network request logs.</p>
+            </div>
+
+            <div class="filters-bar">
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label for="searchEndpoint">Search Endpoint</label>
+                        <input type="text" id="searchEndpoint" class="search-input" placeholder="Search endpoint..."
+                            oninput="applyFilters()">
+                    </div>
+                    <div class="filter-group">
+                        <label for="startDate">Start Date</label>
+                        <input type="date" id="startDate" value="2026-01-07">
+                    </div>
+                    <div class="filter-group">
+                        <label for="endDate">End Date</label>
+                        <input type="date" id="endDate" value="2026-01-07">
+                    </div>
+                    <div class="filter-group">
+                        <label for="statusFilter">Status</label>
+                        <select id="statusFilter">
+                            <option value="all">All Status</option>
+                            <option value="200">200 - Success</option>
+                            <option value="404">404 - Not Found</option>
+                            <option value="500">500 - Server Error</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="platformFilter">Platform</label>
+                        <select id="platformFilter">
+                            <option value="all">All Platforms</option>
+                            <option value="iOS">iOS</option>
+                            <option value="Android">Android</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="versionFilter">App Version</label>
+                        <select id="versionFilter">
+                            <option value="all">All Versions</option>
+                            <option value="v2.1.0">v2.1.0 (Latest)</option>
+                            <option value="v2.0.8">v2.0.8</option>
+                            <option value="v2.0.7">v2.0.7</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filters-actions">
+                    <button class="btn btn-outline" onclick="resetFilters()"><span>↺</span> Reset</button>
+                    <button class="btn btn-success" onclick="applyFilters()"><span>✓</span> Apply Filters</button>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <div class="chart-header">
+                    <h2 class="chart-title">Request Volume & Stability</h2>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-dot"
+                                style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);"></div><span>2xx
+                                Success</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot"
+                                style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);"></div>
+                            <span>4xx/5xx Error</span>
+                        </div>
+                    </div>
+                </div>
+                <canvas id="volumeChart" height="80"></canvas>
+            </div>
+
+            <div class="table-section">
+                <div class="table-header">
+                    <h2 class="table-title">Results <span class="results-count" id="resultsCount">(0)</span></h2>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Endpoint</th>
+                                <th>Status</th>
+                                <th>Latency</th>
+                                <th>Region</th>
+                                <th>Size</th>
+                                <th>Version</th>
+                                <th>Platform</th>
+                                <th>Screen</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="networkTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <footer class="footer">
+                <div class="status-indicator"><span class="status-dot"></span><span>System Status:
+                        <strong>Operational</strong></span></div>
+                <div>&copy; 2026 SMAPI OneDashboard | Powered by GCP</div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // Generate comprehensive network events dataset
+        const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+        const endpoints = [
+            '/api/v1/cart/items', '/api/v1/orders', '/api/v1/users/profile', '/api/v2/notifications',
+            '/api/v1/products', '/api/v1/search', '/api/v1/auth/login', '/api/v1/auth/logout',
+            '/api/v2/payments', '/api/v1/reviews', '/api/v1/wishlist', '/api/v2/analytics',
+            '/api/v1/settings', '/api/v1/categories', '/api/v2/recommendations', '/api/v1/shipping'
+        ];
+        const regions = ['EU-Central', 'US-East', 'US-West', 'APAC-Singapore', 'APAC-Tokyo', 'EU-West'];
+        const versions = ['v2.1.0', 'v2.0.8', 'v2.0.7'];
+        const platforms = ['iOS', 'Android'];
+        const screens = ['Home', 'Profile', 'Cart', 'Checkout', 'ProductDetail', 'Search', 'Login', 'Settings'];
+        const statuses = [200, 200, 200, 200, 200, 200, 200, 200, 404, 500]; // 80% success
+
+        let allEvents = [];
+        let filteredEvents = [];
+
+        // Generate 500 network events
+        function generateEvents() {
+            const events = [];
+            const now = new Date('2026-01-07T20:51:00');
+
+            for (let i = 0; i < 500; i++) {
+                const timestamp = new Date(now.getTime() - (Math.random() * 24 * 60 * 60 * 1000)); // Last 24 hours
+                const status = statuses[Math.floor(Math.random() * statuses.length)];
+                const latency = status === 200
+                    ? Math.floor(Math.random() * 200 + 30)  // 30-230ms for success
+                    : Math.floor(Math.random() * 500 + 200); // 200-700ms for errors
+
+                events.push({
+                    timestamp,
+                    method: methods[Math.floor(Math.random() * methods.length)],
+                    endpoint: endpoints[Math.floor(Math.random() * endpoints.length)],
+                    status,
+                    latency,
+                    region: regions[Math.floor(Math.random() * regions.length)],
+                    size: (Math.random() * 10 + 0.5).toFixed(1) + 'KB',
+                    version: versions[Math.floor(Math.random() * versions.length)],
+                    platform: platforms[Math.floor(Math.random() * platforms.length)],
+                    screen: screens[Math.floor(Math.random() * screens.length)]
+                });
+            }
+
+            return events.sort((a, b) => b.timestamp - a.timestamp);
+        }
+
+        allEvents = generateEvents();
+        filteredEvents = [...allEvents];
+
+        // Modern chart with gradients
+        function initChart() {
+            const ctx = document.getElementById('volumeChart').getContext('2d');
+
+            // Create gradient for success
+            const successGradient = ctx.createLinearGradient(0, 0, 0, 400);
+            successGradient.addColorStop(0, '#10B981');
+            successGradient.addColorStop(1, '#059669');
+
+            // Create gradient for errors
+            const errorGradient = ctx.createLinearGradient(0, 0, 0, 400);
+            errorGradient.addColorStop(0, '#EF4444');
+            errorGradient.addColorStop(1, '#DC2626');
+
+            // Aggregate data by hour
+            const hourlyData = {};
+            filteredEvents.forEach(event => {
+                const hour = event.timestamp.getHours();
+                if (!hourlyData[hour]) {
+                    hourlyData[hour] = { success: 0, error: 0 };
+                }
+                if (event.status === 200) {
+                    hourlyData[hour].success++;
+                } else {
+                    hourlyData[hour].error++;
+                }
+            });
+
+            const hours = Object.keys(hourlyData).sort((a, b) => a - b);
+            const labels = hours.map(h => `${h}:00`);
+            const successData = hours.map(h => hourlyData[h].success);
+            const errorData = hours.map(h => hourlyData[h].error);
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: '2xx Success',
+                            data: successData,
+                            backgroundColor: successGradient,
+                            borderRadius: 6,
+                            borderSkipped: false,
+                            barPercentage: 0.8
+                        },
+                        {
+                            label: '4xx/5xx Error',
+                            data: errorData,
+                            backgroundColor: errorGradient,
+                            borderRadius: 6,
+                            borderSkipped: false,
+                            barPercentage: 0.8
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(23, 23, 23, 0.95)',
+                            padding: 12,
+                            titleFont: { size: 14, weight: '600' },
+                            bodyFont: { size: 13 },
+                            borderColor: '#E5E5E5',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            displayColors: true,
+                            boxPadding: 6
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: { display: false },
+                            ticks: { font: { size: 11 }, color: '#525252' }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            grid: { color: '#E5E5E5', drawBorder: false },
+                            ticks: { font: { size: 11 }, color: '#525252' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('networkTable');
+            const displayEvents = filteredEvents.slice(0, 100); // Show first 100
+
+            tbody.innerHTML = displayEvents.map(event => {
+                const timeStr = event.timestamp.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                const statusClass = event.status === 200 ? 'status-200' : (event.status === 404 ? 'status-404' : 'status-500');
+                const latencyClass = event.latency < 100 ? 'latency-good' : (event.latency < 200 ? 'latency-warning' : 'latency-bad');
+
+                return `
+                    <tr>
+                        <td>${timeStr}</td>
+                        <td>
+                            <div class="endpoint-method">${event.method}</div>
+                            <div class="endpoint-path">${event.endpoint}</div>
+                        </td>
+                        <td><span class="status-badge ${statusClass}">${event.status}</span></td>
+                        <td><span class="latency ${latencyClass}">${event.latency}ms</span></td>
+                        <td>${event.region}</td>
+                        <td>${event.size}</td>
+                        <td>${event.version}</td>
+                        <td>${event.platform}</td>
+                        <td>${event.screen}</td>
+                        <td><span class="play-icon">▶</span></td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('resultsCount').textContent = `(${filteredEvents.length})`;
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchEndpoint').value.toLowerCase();
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+            endDate.setHours(23, 59, 59, 999);
+            const status = document.getElementById('statusFilter').value;
+            const platform = document.getElementById('platformFilter').value;
+            const version = document.getElementById('versionFilter').value;
+
+            filteredEvents = allEvents.filter(event => {
+                const matchesSearch = !searchTerm || event.endpoint.toLowerCase().includes(searchTerm);
+                const matchesDate = event.timestamp >= startDate && event.timestamp <= endDate;
+                const matchesStatus = status === 'all' || event.status.toString() === status;
+                const matchesPlatform = platform === 'all' || event.platform === platform;
+                const matchesVersion = version === 'all' || event.version === version;
+
+                return matchesSearch && matchesDate && matchesStatus && matchesPlatform && matchesVersion;
+            });
+
+            renderTable();
+
+            // Visual feedback
+            const btn = document.querySelector('.btn-success');
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<span>✓</span> Applied!';
+            btn.style.background = '#059669';
+            setTimeout(() => {
+                btn.innerHTML = orig;
+                btn.style.background = '';
+            }, 1500);
+        }
+
+        function resetFilters() {
+            document.getElementById('searchEndpoint').value = '';
+            document.getElementById('startDate').value = '2026-01-07';
+            document.getElementById('endDate').value = '2026-01-07';
+            document.getElementById('statusFilter').value = 'all';
+            document.getElementById('platformFilter').value = 'all';
+            document.getElementById('versionFilter').value = 'all';
+            applyFilters();
+        }
+
+        // Initialize
+        initChart();
+        renderTable();
+    </script>
+</body>
+
+</html>
