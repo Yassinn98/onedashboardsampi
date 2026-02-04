@@ -1,4 +1,4 @@
-#OneDashboard
+# OneDashboard
 
 A comprehensive analytics dashboard for mobile app monitoring with crash reporting, session replay, in-app ratings, and bug tracking.
 
@@ -28,4 +28,3 @@ A comprehensive analytics dashboard for mobile app monitoring with crash reporti
 ## License
 
 MIT License - Feel free to use and modify
-

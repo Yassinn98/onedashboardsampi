@@ -789,8 +789,6 @@
                             <td>
                                 <div class="error-message">NullPointerException in MainActivity.onCreate()</div>
                                 <div class="error-type">java.lang.NullPointerException</div>
-                                <a href="session-replay.html?session=user_8f3d2a1b" class="crash-link"
-                                    onclick="event.stopPropagation()">▶ View Session Replay</a>
                             </td>
                             <td><span class="badge badge-critical">Critical</span></td>
                             <td>342</td>
@@ -802,8 +800,6 @@
                             <td>
                                 <div class="error-message">Network timeout in API call</div>
                                 <div class="error-type">NetworkException</div>
-                                <a href="session-replay.html?session=user_5c9a7f2e" class="crash-link"
-                                    onclick="event.stopPropagation()">▶ View Session Replay</a>
                             </td>
                             <td><span class="badge badge-high">High</span></td>
                             <td>215</td>
@@ -815,8 +811,6 @@
                             <td>
                                 <div class="error-message">IndexOutOfBoundsException in ListView adapter</div>
                                 <div class="error-type">java.lang.IndexOutOfBoundsException</div>
-                                <a href="session-replay.html?session=user_2b4e6d8c" class="crash-link"
-                                    onclick="event.stopPropagation()">▶ View Session Replay</a>
                             </td>
                             <td><span class="badge badge-high">High</span></td>
                             <td>178</td>
@@ -828,8 +822,6 @@
                             <td>
                                 <div class="error-message">Memory warning - app terminated</div>
                                 <div class="error-type">MemoryWarning</div>
-                                <a href="session-replay.html?session=user_9a1c3f5b" class="crash-link"
-                                    onclick="event.stopPropagation()">▶ View Session Replay</a>
                             </td>
                             <td><span class="badge badge-medium">Medium</span></td>
                             <td>124</td>
@@ -841,8 +833,6 @@
                             <td>
                                 <div class="error-message">Database query failed</div>
                                 <div class="error-type">SQLiteException</div>
-                                <a href="session-replay.html?session=user_7e2d4a9f" class="crash-link"
-                                    onclick="event.stopPropagation()">▶ View Session Replay</a>
                             </td>
                             <td><span class="badge badge-medium">Medium</span></td>
                             <td>89</td>
@@ -854,8 +844,6 @@
                             <td>
                                 <div class="error-message">Image loading failed</div>
                                 <div class="error-type">ImageLoadException</div>
-                                <a href="session-replay.html?session=user_3f8b1c6d" class="crash-link"
-                                    onclick="event.stopPropagation()">▶ View Session Replay</a>
                             </td>
                             <td><span class="badge badge-low">Low</span></td>
                             <td>56</td>
@@ -986,9 +974,21 @@
             content.innerHTML = `
                 <h3 style="margin-bottom: 16px;">Stack Trace</h3>
                 <div class="stack-trace">${stackTraces[index]}</div>
-                <h3 style="margin: 24px 0 16px 0;">Associated Session</h3>
-                <p>This crash occurred during user session <strong>user_8f3d2a1b</strong></p>
-                <a href="session-replay.html?session=user_8f3d2a1b" class="crash-link" style="font-size: 14px; margin-top: 8px;">▶ View Full Session Replay</a>
+                <h3 style="margin: 24px 0 16px 0;">User Steps (Last 10)</h3>
+                <div style="background: var(--neutral-50); border: 1px solid var(--neutral-200); border-radius: 6px; padding: 16px;">
+                    <ol style="padding-left: 20px; line-height: 1.8; font-size: 14px;">
+                        <li>User logged in</li>
+                        <li>Navigated to Dashboard</li>
+                        <li>Clicked on Crash Reporting</li>
+                        <li>Scrolled through crash groups</li>
+                        <li>Filtered by critical severity</li>
+                        <li>Clicked on NullPointerException item</li>
+                        <li>Viewed stack trace</li>
+                        <li>Attempted to copy error log</li>
+                        <li>Network request initiated</li>
+                        <li style="color: var(--vodafone-red); font-weight: 600;">App crashed with error</li>
+                    </ol>
+                </div>
             `;
             modal.classList.add('show');
         }

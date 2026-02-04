@@ -650,12 +650,10 @@
                                 <th>Endpoint</th>
                                 <th>Status</th>
                                 <th>Latency</th>
-                                <th>Region</th>
-                                <th>Size</th>
                                 <th>Version</th>
                                 <th>Platform</th>
                                 <th>Screen</th>
-                                <th>Actions</th>
+                                <th>User Steps</th>
                             </tr>
                         </thead>
                         <tbody id="networkTable"></tbody>
@@ -824,6 +822,10 @@
                 const statusClass = event.status === 200 ? 'status-200' : (event.status === 404 ? 'status-404' : 'status-500');
                 const latencyClass = event.latency < 100 ? 'latency-good' : (event.latency < 200 ? 'latency-warning' : 'latency-bad');
 
+                const userStepsButton = event.status !== 200
+                    ? `<button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="showUserSteps()">View Steps</button>`
+                    : `<span style="color: var(--neutral-400); font-size: 12px;">Not available</span>`;
+
                 return `
                     <tr>
                         <td>${timeStr}</td>
@@ -833,12 +835,10 @@
                         </td>
                         <td><span class="status-badge ${statusClass}">${event.status}</span></td>
                         <td><span class="latency ${latencyClass}">${event.latency}ms</span></td>
-                        <td>${event.region}</td>
-                        <td>${event.size}</td>
                         <td>${event.version}</td>
                         <td>${event.platform}</td>
                         <td>${event.screen}</td>
-                        <td><span class="play-icon">▶</span></td>
+                        <td>${userStepsButton}</td>
                     </tr>
                 `;
             }).join('');
@@ -891,6 +891,43 @@
         // Initialize
         initChart();
         renderTable();
+    </script>
+
+    <!-- User Steps Overlay -->
+    <div id="userStepsOverlay"
+        style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;">
+        <div
+            style="background: white; border-radius: 12px; padding: 32px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h2 style="font-size: 20px; font-weight: 600; color: var(--neutral-900);">Last 10 User Steps</h2>
+                <button onclick="closeUserSteps()"
+                    style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--neutral-600);">&times;</button>
+            </div>
+            <div id="userStepsContent">
+                <ol style="padding-left: 20px; line-height: 2;">
+                    <li>User opened app</li>
+                    <li>Navigated to Dashboard</li>
+                    <li>Clicked on Network Monitoring</li>
+                    <li>Scrolled through requests list</li>
+                    <li>Filtered by status code 200</li>
+                    <li>Selected request #4521</li>
+                    <li>Viewed request details</li>
+                    <li>Copied request URL</li>
+                    <li>Closed details panel</li>
+                    <li>Refreshed page</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showUserSteps() {
+            document.getElementById('userStepsOverlay').style.display = 'flex';
+        }
+
+        function closeUserSteps() {
+            document.getElementById('userStepsOverlay').style.display = 'none';
+        }
     </script>
 </body>
 

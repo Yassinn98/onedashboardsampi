@@ -477,6 +477,49 @@
             animation: pulse 2s infinite;
         }
 
+        /* Breadcrumbs */
+        .breadcrumbs {
+            background: white;
+            border: 1px solid var(--neutral-200);
+            border-radius: 8px;
+            padding: 12px 20px;
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .breadcrumb-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--neutral-700);
+        }
+
+        .breadcrumb-icon {
+            font-size: 16px;
+        }
+
+        .breadcrumb-label {
+            font-weight: 500;
+            color: var(--neutral-600);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .breadcrumb-value {
+            font-weight: 600;
+            color: var(--neutral-900);
+        }
+
+        .breadcrumb-separator {
+            color: var(--neutral-300);
+            font-weight: 300;
+        }
+
         @keyframes pulse {
 
             0%,
@@ -591,9 +634,18 @@
     <div class="main-wrapper">
         <div class="container">
             <div class="hero">
-                <h1 class="hero-title">Welcome to OneDashboard</h1>
-                <p class="hero-subtitle">Comprehensive analytics and monitoring platform for your mobile applications
-                </p>
+                <div
+                    style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                    <div>
+                        <h1 class="hero-title">Welcome to OneDashboard</h1>
+                        <p class="hero-subtitle" id="heroSubtitle">Comprehensive analytics and monitoring platform for
+                            your mobile applications</p>
+                    </div>
+                    <button onclick="window.location.href='select.html'"
+                        style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(10px);"
+                        onmouseover="this.style.background='rgba(255,255,255,0.3)'"
+                        onmouseout="this.style.background='rgba(255,255,255,0.2)'">⚙️ Change Settings</button>
+                </div>
                 <div class="hero-stats">
                     <div class="hero-stat">
                         <div class="hero-stat-value">4.8M</div>
@@ -755,11 +807,12 @@
                     <div class="card-trend up">↑ Positive sentiment</div>
                 </div>
 
-                <div class="insight-card purple" onclick="location.href='session-replay.html'">
+                <div class="insight-card purple" style="opacity: 0.6; cursor: not-allowed;">
                     <div class="card-header">
                         <div>
                             <div class="card-title">Session Insights</div>
-                            <div class="card-value">6</div>
+                            <div class="card-value" style="font-size: 16px; color: var(--neutral-600);">Not Integrated
+                            </div>
                         </div>
                         <div class="card-icon purple">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -768,8 +821,8 @@
                             </svg>
                         </div>
                     </div>
-                    <div class="card-description">Recent sessions available for replay with rage click detection</div>
-                    <div class="card-trend">View recordings →</div>
+                    <div class="card-description">This feature is not currently integrated with the dashboard</div>
+                    <div class="card-trend" style="color: var(--neutral-500);">⚠️ Feature unavailable</div>
                 </div>
 
                 <div class="insight-card blue" onclick="location.href='reported-bugs.html'">
@@ -920,6 +973,70 @@
                 }
             }
         });
+    </script>
+
+    <script>
+        // Check for platform and market selections
+        function checkSelections() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlPlatform = urlParams.get('platform');
+            const urlMarket = urlParams.get('market');
+
+            // Update localStorage if URL parameters are present
+            if (urlPlatform && urlMarket) {
+                localStorage.setItem('selectedPlatform', urlPlatform);
+                localStorage.setItem('selectedMarket', urlMarket);
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+
+            // Get selections from localStorage
+            const email = localStorage.getItem('userEmail');
+            const platform = localStorage.getItem('selectedPlatform');
+            const market = localStorage.getItem('selectedMarket');
+
+            // Redirect to selection page if no email or selections found
+            if (!email || !platform || !market) {
+                window.location.href = 'select.html';
+                return;
+            }
+
+            // Update hero subtitle with selections
+            const subtitle = document.getElementById('heroSubtitle');
+            const platformIcon = platform === 'App' ? '📱' : '🌐';
+            const marketFlags = { 'IE': '🇮🇪', 'PT': '🇵🇹', 'UK': '🇬🇧' };
+            const marketNames = { 'IE': 'Ireland', 'PT': 'Portugal', 'UK': 'United Kingdom' };
+
+            subtitle.innerHTML = `${platformIcon} <strong>${platform}</strong> Platform | ${marketFlags[market]} <strong>${marketNames[market]}</strong> Market`;
+
+            // Update breadcrumbs
+            updateBreadcrumbs(platform, market);
+        }
+
+        // Update breadcrumbs function
+        function updateBreadcrumbs(platform, market) {
+            const breadcrumbs = document.getElementById('breadcrumbs');
+            const platformIcon = document.getElementById('platformIcon');
+            const platformValue = document.getElementById('platformValue');
+            const marketIcon = document.getElementById('marketIcon');
+            const marketValue = document.getElementById('marketValue');
+
+            if (breadcrumbs && platform && market) {
+                const platformIcons = { 'App': '📱', 'Web': '🌐' };
+                const marketFlags = { 'IE': '🇮🇪', 'PT': '🇵🇹', 'UK': '🇬🇧' };
+                const marketNames = { 'IE': 'Ireland', 'PT': 'Portugal', 'UK': 'United Kingdom' };
+
+                platformIcon.textContent = platformIcons[platform] || '';
+                platformValue.textContent = platform;
+                marketIcon.textContent = marketFlags[market] || '';
+                marketValue.textContent = marketNames[market] || market;
+
+                breadcrumbs.style.display = 'flex';
+            }
+        }
+
+        // Run on page load
+        checkSelections();
     </script>
 </body>
 
