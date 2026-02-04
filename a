@@ -1,1 +1,19 @@
-https://chatgpt.com/share/6960e53a-2c78-8013-89b8-6e00af4d3807
+Overview page:
+-Session insights to be removed or display message that feature is not integrated 
+include breadcrumbs or similar concept to display which market/platform is selected 
+include ability to select market/ platform and user profile icon
+ 
+Network Monitoring
+- modify results to remove region
+-modify actions to User steps and by clicking overlay/pop shall appear displaying the last x user steps 
+-remove size column
+ 
+Crash reporting 
+For crashes reported remove view session replay option 
+for each crash when selected in the overlay replace the link for the associated session replay with the User steps and display the last X steps
+ 
+In App rating 
+in recent reviews
+Remove comment added for each review as its not supported
+in Insights 
+remove top key words and avg response time
