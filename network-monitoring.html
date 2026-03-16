@@ -277,6 +277,13 @@
             box-shadow: var(--shadow-md);
         }
 
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
         .chart-section {
             background: white;
             border: 1px solid var(--neutral-200);
@@ -619,23 +626,42 @@
                 </div>
             </div>
 
-            <div class="chart-section">
-                <div class="chart-header">
-                    <h2 class="chart-title">Request Volume & Stability</h2>
-                    <div class="legend">
-                        <div class="legend-item">
-                            <div class="legend-dot"
-                                style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);"></div><span>2xx
-                                Success</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-dot"
-                                style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);"></div>
-                            <span>4xx/5xx Error</span>
+            <div class="charts-grid">
+                <div class="chart-section" style="margin-bottom: 0;">
+                    <div class="chart-header">
+                        <h2 class="chart-title">Request Volume & Stability</h2>
+                        <div class="legend">
+                            <div class="legend-item">
+                                <div class="legend-dot"
+                                    style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);"></div><span>2xx
+                                    Success</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-dot"
+                                    style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);"></div>
+                                <span>4xx/5xx Error</span>
+                            </div>
                         </div>
                     </div>
+                    <canvas id="volumeChart" height="150"></canvas>
                 </div>
-                <canvas id="volumeChart" height="80"></canvas>
+
+                <div class="chart-section" style="margin-bottom: 0;">
+                    <div class="chart-header">
+                        <h2 class="chart-title">Top Failing Endpoints</h2>
+                        <div class="legend">
+                            <div class="legend-item">
+                                <div class="legend-dot" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);"></div>
+                                <span>4xx Error</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-dot" style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);"></div>
+                                <span>5xx Error</span>
+                            </div>
+                        </div>
+                    </div>
+                    <canvas id="failingEndpointsChart" height="150"></canvas>
+                </div>
             </div>
 
             <div class="table-section">
@@ -719,8 +745,15 @@
         allEvents = generateEvents();
         filteredEvents = [...allEvents];
 
+        // Maintain reference to chart instances for destroying/updating
+        let volumeChartInstance = null;
+        let failChartInstance = null;
+
         // Modern chart with gradients
         function initChart() {
+            if (volumeChartInstance) volumeChartInstance.destroy();
+            if (failChartInstance) failChartInstance.destroy();
+
             const ctx = document.getElementById('volumeChart').getContext('2d');
 
             // Create gradient for success
@@ -752,7 +785,7 @@
             const successData = hours.map(h => hourlyData[h].success);
             const errorData = hours.map(h => hourlyData[h].error);
 
-            new Chart(ctx, {
+            volumeChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels,
@@ -807,6 +840,105 @@
                             beginAtZero: true,
                             grid: { color: '#E5E5E5', drawBorder: false },
                             ticks: { font: { size: 11 }, color: '#525252' }
+                        }
+                    }
+                }
+            });
+
+            // Failing Endpoints Chart
+            const failCtx = document.getElementById('failingEndpointsChart').getContext('2d');
+            
+            const fail4xxGradient = failCtx.createLinearGradient(0, 0, 0, 400);
+            fail4xxGradient.addColorStop(0, '#F59E0B');
+            fail4xxGradient.addColorStop(1, '#D97706');
+
+            const fail5xxGradient = failCtx.createLinearGradient(0, 0, 0, 400);
+            fail5xxGradient.addColorStop(0, '#EF4444');
+            fail5xxGradient.addColorStop(1, '#DC2626');
+
+            // Aggregate failing data by endpoint
+            const failingData = {};
+            filteredEvents.forEach(event => {
+                if (event.status >= 400) {
+                    if (!failingData[event.endpoint]) {
+                        failingData[event.endpoint] = { total: 0, '4xx': 0, '5xx': 0 };
+                    }
+                    failingData[event.endpoint].total++;
+                    if (event.status >= 500) {
+                        failingData[event.endpoint]['5xx']++;
+                    } else {
+                        failingData[event.endpoint]['4xx']++;
+                    }
+                }
+            });
+
+            // Get top 5 failing endpoints
+            const sortedFailing = Object.entries(failingData)
+                .sort((a, b) => b[1].total - a[1].total)
+                .slice(0, 5);
+
+            const failLabels = sortedFailing.map(item => {
+                const parts = item[0].split('/');
+                return '/' + parts[parts.length - 1]; // Only show end of path to fit horizontally
+            });
+            const fail4xxCounts = sortedFailing.map(item => item[1]['4xx']);
+            const fail5xxCounts = sortedFailing.map(item => item[1]['5xx']);
+
+            failChartInstance = new Chart(failCtx, {
+                type: 'bar',
+                data: {
+                    labels: failLabels,
+                    datasets: [
+                        {
+                            label: '4xx Errors',
+                            data: fail4xxCounts,
+                            backgroundColor: fail4xxGradient,
+                            borderRadius: 6,
+                            borderSkipped: false,
+                            barPercentage: 0.6
+                        },
+                        {
+                            label: '5xx Errors',
+                            data: fail5xxCounts,
+                            backgroundColor: fail5xxGradient,
+                            borderRadius: 6,
+                            borderSkipped: false,
+                            barPercentage: 0.6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(23, 23, 23, 0.95)',
+                            padding: 12,
+                            titleFont: { size: 14, weight: '600' },
+                            bodyFont: { size: 13 },
+                            borderColor: '#E5E5E5',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            displayColors: true,
+                            boxPadding: 6
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: { display: false },
+                            ticks: { font: { size: 11 }, color: '#525252' }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            grid: { color: '#E5E5E5', drawBorder: false },
+                            ticks: { 
+                                font: { size: 11 }, 
+                                color: '#525252',
+                                stepSize: 1
+                            }
                         }
                     }
                 }
@@ -866,6 +998,7 @@
             });
 
             renderTable();
+            initChart();
 
             // Visual feedback
             const btn = document.querySelector('.btn-success');
