@@ -836,27 +836,53 @@
 
             <!-- Charts -->
             <section class="charts-section" role="region" aria-label="Analytics charts">
-                <!-- Page Views Chart -->
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <h2 class="chart-title">Page Views Trend</h2>
-                        <select class="chart-filter" id="pageFilter" onchange="updatePageViewChart()">
-                            <option value="all">Overall Views</option>
-                            <option value="/home">/home</option>
-                            <option value="/product-detail">/product-detail</option>
-                            <option value="/checkout">/checkout</option>
-                        </select>
+                <!-- Visits & Unique Visitors Charts -->
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Visits</h2>
+                        </div>
+                        <canvas id="visitsChart" height="150"></canvas>
                     </div>
-                    <canvas id="pageViewChart" height="80"></canvas>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Unique Visitors</h2>
+                        </div>
+                        <canvas id="uniqueVisitorsChart" height="150"></canvas>
+                    </div>
                 </div>
 
-                <!-- Network & Launch Charts -->
+                <!-- Page Views & Network Charts -->
                 <div class="charts-grid">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Page Views Trend</h2>
+                            <select class="chart-filter" id="pageFilter" onchange="updatePageViewChart()">
+                                <option value="all">Overall Views</option>
+                                <option value="/home">/home</option>
+                                <option value="/product-detail">/product-detail</option>
+                                <option value="/checkout">/checkout</option>
+                            </select>
+                        </div>
+                        <canvas id="pageViewChart" height="150"></canvas>
+                    </div>
+
                     <div class="chart-container">
                         <div class="chart-header">
                             <h2 class="chart-title">Network Requests</h2>
                         </div>
                         <canvas id="networkChart" height="150"></canvas>
+                    </div>
+                </div>
+
+                <!-- Element Load & Launch Charts -->
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Key Element Load Time </h2>
+                        </div>
+                        <canvas id="elementLoadChart" height="150"></canvas>
                     </div>
 
                     <div class="chart-container">
@@ -865,14 +891,6 @@
                         </div>
                         <canvas id="launchChart" height="150"></canvas>
                     </div>
-                </div>
-
-                <!-- Element Load Chart -->
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <h2 class="chart-title">Key Element Load Time </h2>
-                    </div>
-                    <canvas id="elementLoadChart" height="80"></canvas>
                 </div>
             </section>
 
@@ -914,7 +932,9 @@
             pageView: null,
             network: null,
             launch: null,
-            elementLoad: null
+            elementLoad: null,
+            visits: null,
+            uniqueVisitors: null
         };
 
         // Store current filter state
@@ -1145,6 +1165,50 @@
                 options: commonChartOptions
             });
 
+            // Visits Chart
+            charts.visits = new Chart(document.getElementById('visitsChart'), {
+                type: 'line',
+                data: {
+                    labels: days,
+                    datasets: [{
+                        label: 'Visits',
+                        data: generateData(15000, 3000),
+                        borderColor: CONFIG.chartColors.info,
+                        backgroundColor: 'rgba(59, 130, 246, 0.05)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 3,
+                        pointBackgroundColor: CONFIG.chartColors.info,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: commonChartOptions
+            });
+
+            // Unique Visitors Chart
+            charts.uniqueVisitors = new Chart(document.getElementById('uniqueVisitorsChart'), {
+                type: 'line',
+                data: {
+                    labels: days,
+                    datasets: [{
+                        label: 'Unique Visitors',
+                        data: generateData(8000, 1500),
+                        borderColor: CONFIG.chartColors.purple,
+                        backgroundColor: 'rgba(139, 92, 246, 0.05)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 3,
+                        pointBackgroundColor: CONFIG.chartColors.purple,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: commonChartOptions
+            });
+
             // Element Load Chart
             charts.elementLoad = new Chart(document.getElementById('elementLoadChart'), {
                 type: 'line',
@@ -1182,6 +1246,10 @@
                             dataset.data = generateData(430, 60);
                         } else if (dataset.label.includes('Load')) {
                             dataset.data = generateData(900, 150);
+                        } else if (dataset.label === 'Visits') {
+                            dataset.data = generateData(15000, 3000);
+                        } else if (dataset.label === 'Unique Visitors') {
+                            dataset.data = generateData(8000, 1500);
                         }
                     });
                     chart.update();
