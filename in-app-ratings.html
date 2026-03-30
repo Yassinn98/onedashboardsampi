@@ -438,6 +438,10 @@
                     </svg>
                     <span>Session Replay</span>
                 </a>
+                <a href="user-journeys.html" class="nav-item">
+                    <svg class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
+                    <span>User Journeys</span>
+                </a>
             </div>
             <div class="nav-section">
                 <div class="nav-section-title">User Feedback</div>
@@ -484,103 +488,122 @@
         <div class="container">
             <header class="header">
                 <h1>In-App Ratings</h1>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <span style="font-size:12px;color:var(--neutral-600);background:var(--neutral-100);padding:4px 12px;border-radius:20px;display:flex;align-items:center;gap:6px;"><span style="width:7px;height:7px;border-radius:50%;background:#10B981;display:inline-block;animation:pulse 2s infinite;"></span> Live · App Store Feed</span>
+                    <button id="refreshBtn" style="padding:8px 16px;background:var(--vodafone-red);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;">↻ Refresh</button>
+                </div>
             </header>
 
             <div class="rating-overview">
                 <div class="rating-summary">
-                    <div class="avg-rating">4.5</div>
-                    <div class="stars">★★★★★</div>
-                    <div class="total-reviews">Based on 12,458 reviews</div>
+                    <div class="avg-rating" id="avgRating">—</div>
+                    <div class="stars" id="avgStars">☆☆☆☆☆</div>
+                    <div class="total-reviews" id="totalReviews">Loading reviews…</div>
                 </div>
-                <div class="rating-distribution">
-                    <div class="rating-bar">
-                        <div class="rating-bar-label">5 stars</div>
-                        <div class="rating-bar-track">
-                            <div class="rating-bar-fill" style="width: 65%"></div>
-                        </div>
-                        <div class="rating-bar-count">8,098</div>
-                    </div>
-                    <div class="rating-bar">
-                        <div class="rating-bar-label">4 stars</div>
-                        <div class="rating-bar-track">
-                            <div class="rating-bar-fill" style="width: 20%"></div>
-                        </div>
-                        <div class="rating-bar-count">2,492</div>
-                    </div>
-                    <div class="rating-bar">
-                        <div class="rating-bar-label">3 stars</div>
-                        <div class="rating-bar-track">
-                            <div class="rating-bar-fill" style="width: 8%"></div>
-                        </div>
-                        <div class="rating-bar-count">997</div>
-                    </div>
-                    <div class="rating-bar">
-                        <div class="rating-bar-label">2 stars</div>
-                        <div class="rating-bar-track">
-                            <div class="rating-bar-fill" style="width: 4%"></div>
-                        </div>
-                        <div class="rating-bar-count">498</div>
-                    </div>
-                    <div class="rating-bar">
-                        <div class="rating-bar-label">1 star</div>
-                        <div class="rating-bar-track">
-                            <div class="rating-bar-fill" style="width: 3%"></div>
-                        </div>
-                        <div class="rating-bar-count">373</div>
-                    </div>
+                <div class="rating-distribution" id="ratingDistribution">
+                    <div class="rating-bar"><div class="rating-bar-label">5 stars</div><div class="rating-bar-track"><div class="rating-bar-fill" id="bar5" style="width:0%"></div></div><div class="rating-bar-count" id="count5">0</div></div>
+                    <div class="rating-bar"><div class="rating-bar-label">4 stars</div><div class="rating-bar-track"><div class="rating-bar-fill" id="bar4" style="width:0%"></div></div><div class="rating-bar-count" id="count4">0</div></div>
+                    <div class="rating-bar"><div class="rating-bar-label">3 stars</div><div class="rating-bar-track"><div class="rating-bar-fill" id="bar3" style="width:0%"></div></div><div class="rating-bar-count" id="count3">0</div></div>
+                    <div class="rating-bar"><div class="rating-bar-label">2 stars</div><div class="rating-bar-track"><div class="rating-bar-fill" id="bar2" style="width:0%"></div></div><div class="rating-bar-count" id="count2">0</div></div>
+                    <div class="rating-bar"><div class="rating-bar-label">1 star</div><div class="rating-bar-track"><div class="rating-bar-fill" id="bar1" style="width:0%"></div></div><div class="rating-bar-count" id="count1">0</div></div>
                 </div>
             </div>
 
+            <!-- Filter Tabs -->
+            <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;" id="filterTabs">
+                <button class="filter-tab active" data-filter="all">All Reviews</button>
+                <button class="filter-tab" data-filter="5">★★★★★</button>
+                <button class="filter-tab" data-filter="4">★★★★☆</button>
+                <button class="filter-tab" data-filter="3">★★★☆☆</button>
+                <button class="filter-tab" data-filter="2">★★☆☆☆</button>
+                <button class="filter-tab" data-filter="1">★☆☆☆☆</button>
+            </div>
+
+            <style>
+                .filter-tab {
+                    padding: 6px 16px;
+                    border: 1px solid var(--neutral-200);
+                    border-radius: 20px;
+                    background: white;
+                    font-size: 13px;
+                    cursor: pointer;
+                    font-weight: 500;
+                    color: var(--neutral-700);
+                    transition: all 0.2s;
+                }
+                .filter-tab:hover { border-color: var(--vodafone-red); color: var(--vodafone-red); }
+                .filter-tab.active { background: var(--vodafone-red); color: white; border-color: var(--vodafone-red); }
+                .review-title { font-weight: 600; font-size: 14px; color: var(--neutral-900); margin-bottom: 4px; }
+                .review-text { font-size: 13.5px; color: var(--neutral-700); line-height: 1.65; }
+                .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
+                @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+                .sentiment-positive { color: var(--success); }
+                .sentiment-negative { color: var(--vodafone-red); }
+                .sentiment-neutral { color: var(--warning); }
+                .pagination {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 6px;
+                    padding: 16px 0 4px;
+                    flex-wrap: wrap;
+                }
+                .pagination button {
+                    min-width: 36px;
+                    height: 36px;
+                    border: 1px solid var(--neutral-200);
+                    border-radius: 8px;
+                    background: #fff;
+                    color: var(--neutral-700);
+                    font-size: 13px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .pagination button:hover:not(:disabled) { border-color: var(--vodafone-red); color: var(--vodafone-red); }
+                .pagination button.active { background: var(--vodafone-red); color: #fff; border-color: var(--vodafone-red); }
+                .pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
+                .pagination-info {
+                    font-size: 12px;
+                    color: var(--neutral-600);
+                    text-align: center;
+                    padding-top: 8px;
+                }
+            </style>
+
             <div class="content-grid">
                 <div class="reviews-section">
-                    <h2 class="section-title">Recent Reviews</h2>
-                    <div class="review-card">
-                        <div class="review-header">
-                            <div>
-                                <div class="review-user">Sarah M.</div>
-                                <div class="review-stars">★★★★★</div>
-                            </div>
-                        </div>
-                        <div class="review-version">v2.1.0 • iOS</div>
+                    <h2 class="section-title">Recent App Store Reviews — My Vodafone UK</h2>
+                    <div id="reviewsList">
+                        <!-- Skeleton loading -->
+                        <div class="review-card"><div class="skeleton" style="height:14px;width:120px;margin-bottom:8px;"></div><div class="skeleton" style="height:12px;width:80px;margin-bottom:10px;"></div><div class="skeleton" style="height:40px;width:100%;"></div></div>
+                        <div class="review-card"><div class="skeleton" style="height:14px;width:140px;margin-bottom:8px;"></div><div class="skeleton" style="height:12px;width:60px;margin-bottom:10px;"></div><div class="skeleton" style="height:40px;width:100%;"></div></div>
+                        <div class="review-card"><div class="skeleton" style="height:14px;width:100px;margin-bottom:8px;"></div><div class="skeleton" style="height:12px;width:90px;margin-bottom:10px;"></div><div class="skeleton" style="height:40px;width:100%;"></div></div>
                     </div>
-                    <div class="review-card">
-                        <div class="review-header">
-                            <div>
-                                <div class="review-user">John D.</div>
-                                <div class="review-stars">★★★★☆</div>
-                            </div>
-                        </div>
-                        <div class="review-version">v2.0.8 • Android</div>
-                    </div>
-                    <div class="review-card">
-                        <div class="review-header">
-                            <div>
-                                <div class="review-user">Emma W.</div>
-                                <div class="review-stars">★★★★★</div>
-                            </div>
-                        </div>
-                        <div class="review-version">v2.1.0 • iOS</div>
-                    </div>
-                    <div class="review-card">
-                        <div class="review-header">
-                            <div>
-                                <div class="review-user">Michael R.</div>
-                                <div class="review-stars">★★★☆☆</div>
-                            </div>
-                        </div>
-                        <div class="review-version">v2.0.8 • Android</div>
-                    </div>
+                    <div id="paginationControls"></div>
                 </div>
 
                 <div class="insights-section">
                     <h2 class="section-title">Insights</h2>
                     <div class="insight-card">
                         <div class="insight-label">Sentiment</div>
-                        <div class="insight-value" style="color: var(--success);">Positive</div>
+                        <div class="insight-value" id="sentimentValue" style="color: var(--success);">Loading…</div>
                     </div>
                     <div class="insight-card">
-                        <div class="insight-label">Response Rate</div>
-                        <div class="insight-value">87%</div>
+                        <div class="insight-label">Positive Reviews</div>
+                        <div class="insight-value" id="positivePercent">—</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-label">Negative Reviews</div>
+                        <div class="insight-value" id="negativePercent" style="color:var(--vodafone-red);">—</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-label">Current App Version</div>
+                        <div class="insight-value" id="appVersion">—</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-label">Latest Review</div>
+                        <div class="insight-value" id="latestDate" style="font-size:16px;">—</div>
                     </div>
                 </div>
             </div>
@@ -592,6 +615,215 @@
             </footer>
         </div>
     </div>
+
+    <script>
+        const APP_ID = '370901726';
+        const TOTAL_PAGES = 5;
+        const REVIEWS_PER_PAGE = 15;
+        let allReviews = [];
+        let currentFilter = 'all';
+        let currentPage = 1;
+
+        async function fetchPage(page) {
+            const url = `https://itunes.apple.com/gb/rss/customerreviews/page=${page}/id=${APP_ID}/sortBy=mostRecent/json`;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) return [];
+                const data = await response.json();
+                const entries = data.feed?.entry || [];
+                return entries.filter(e => e['im:rating']).map(entry => ({
+                    id: entry.id.label,
+                    author: entry.author.name.label,
+                    rating: parseInt(entry['im:rating'].label),
+                    title: entry.title.label,
+                    content: entry.content.label,
+                    date: new Date(entry.updated.label),
+                    version: entry['im:version']?.label || '—',
+                    votes: parseInt(entry['im:voteSum']?.label || '0')
+                }));
+            } catch { return []; }
+        }
+
+        async function fetchReviews() {
+            try {
+                document.getElementById('totalReviews').textContent = 'Fetching reviews across 5 pages…';
+                // Fetch all pages in parallel
+                const pages = Array.from({ length: TOTAL_PAGES }, (_, i) => fetchPage(i + 1));
+                const results = await Promise.all(pages);
+                const all = results.flat();
+                // Deduplicate by review ID
+                const seen = new Set();
+                allReviews = all.filter(r => {
+                    if (seen.has(r.id)) return false;
+                    seen.add(r.id);
+                    return true;
+                });
+                // Sort by date descending
+                allReviews.sort((a, b) => b.date - a.date);
+                updateUI();
+            } catch (err) {
+                document.getElementById('reviewsList').innerHTML = `
+                    <div style="padding:24px;text-align:center;color:var(--neutral-600);">
+                        <p>⚠️ Unable to load reviews. This may be due to CORS restrictions.</p>
+                        <p style="font-size:12px;margin-top:8px;">Try opening this page directly or deploying to GitHub Pages.</p>
+                    </div>`;
+            }
+        }
+
+        function updateUI() {
+            updateOverview();
+            updateInsights();
+            renderReviews();
+        }
+
+        function updateOverview() {
+            if (!allReviews.length) return;
+            const total = allReviews.length;
+            const sum = allReviews.reduce((s, r) => s + r.rating, 0);
+            const avg = (sum / total).toFixed(1);
+
+            document.getElementById('avgRating').textContent = avg;
+            document.getElementById('avgStars').textContent = getStars(Math.round(avg));
+            document.getElementById('totalReviews').textContent = `Based on ${total} most recent reviews`;
+
+            const counts = [0, 0, 0, 0, 0];
+            allReviews.forEach(r => counts[r.rating - 1]++);
+            for (let i = 1; i <= 5; i++) {
+                const pct = total > 0 ? ((counts[i - 1] / total) * 100).toFixed(0) : 0;
+                document.getElementById('bar' + i).style.width = pct + '%';
+                document.getElementById('count' + i).textContent = counts[i - 1];
+            }
+        }
+
+        function updateInsights() {
+            if (!allReviews.length) return;
+            const positive = allReviews.filter(r => r.rating >= 4).length;
+            const negative = allReviews.filter(r => r.rating <= 2).length;
+            const total = allReviews.length;
+            const posPct = ((positive / total) * 100).toFixed(0);
+            const negPct = ((negative / total) * 100).toFixed(0);
+
+            const sentimentEl = document.getElementById('sentimentValue');
+            if (posPct >= 60) {
+                sentimentEl.textContent = 'Positive';
+                sentimentEl.style.color = 'var(--success)';
+            } else if (negPct >= 50) {
+                sentimentEl.textContent = 'Negative';
+                sentimentEl.style.color = 'var(--vodafone-red)';
+            } else {
+                sentimentEl.textContent = 'Mixed';
+                sentimentEl.style.color = 'var(--warning)';
+            }
+
+            document.getElementById('positivePercent').textContent = posPct + '%';
+            document.getElementById('negativePercent').textContent = negPct + '%';
+            document.getElementById('appVersion').textContent = 'v' + allReviews[0].version;
+
+            const latest = allReviews[0].date;
+            document.getElementById('latestDate').textContent = latest.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function renderReviews() {
+            const filtered = currentFilter === 'all' ? allReviews : allReviews.filter(r => r.rating === parseInt(currentFilter));
+            const list = document.getElementById('reviewsList');
+            const paginationEl = document.getElementById('paginationControls');
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--neutral-600);">No reviews matching this filter.</div>';
+                paginationEl.innerHTML = '';
+                return;
+            }
+
+            const totalPages = Math.ceil(filtered.length / REVIEWS_PER_PAGE);
+            if (currentPage > totalPages) currentPage = totalPages;
+            const start = (currentPage - 1) * REVIEWS_PER_PAGE;
+            const end = Math.min(start + REVIEWS_PER_PAGE, filtered.length);
+            const pageReviews = filtered.slice(start, end);
+
+            list.innerHTML = pageReviews.map(r => `
+                <div class="review-card">
+                    <div class="review-header">
+                        <div>
+                            <div class="review-user">${escapeHtml(r.author)}</div>
+                            <div class="review-stars">${getStars(r.rating)}</div>
+                        </div>
+                        <div class="review-date">${r.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+                    </div>
+                    <div class="review-title">${escapeHtml(r.title)}</div>
+                    <div class="review-text">${escapeHtml(r.content)}</div>
+                    <div class="review-version">v${escapeHtml(r.version)} • iOS</div>
+                </div>
+            `).join('');
+
+            // Build pagination
+            let paginationHTML = '<div class="pagination">';
+            paginationHTML += `<button ${currentPage === 1 ? 'disabled' : ''} data-page="${currentPage - 1}">‹ Prev</button>`;
+
+            // Smart page range
+            const maxVisible = 5;
+            let pageStart = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+            let pageEnd = Math.min(totalPages, pageStart + maxVisible - 1);
+            if (pageEnd - pageStart + 1 < maxVisible) pageStart = Math.max(1, pageEnd - maxVisible + 1);
+
+            if (pageStart > 1) {
+                paginationHTML += `<button data-page="1">1</button>`;
+                if (pageStart > 2) paginationHTML += `<span style="color:var(--neutral-400);padding:0 2px;">…</span>`;
+            }
+            for (let i = pageStart; i <= pageEnd; i++) {
+                paginationHTML += `<button data-page="${i}" class="${i === currentPage ? 'active' : ''}">${i}</button>`;
+            }
+            if (pageEnd < totalPages) {
+                if (pageEnd < totalPages - 1) paginationHTML += `<span style="color:var(--neutral-400);padding:0 2px;">…</span>`;
+                paginationHTML += `<button data-page="${totalPages}">${totalPages}</button>`;
+            }
+
+            paginationHTML += `<button ${currentPage === totalPages ? 'disabled' : ''} data-page="${currentPage + 1}">Next ›</button>`;
+            paginationHTML += '</div>';
+            paginationHTML += `<div class="pagination-info">Showing ${start + 1}–${end} of ${filtered.length} reviews</div>`;
+
+            paginationEl.innerHTML = paginationHTML;
+
+            // Pagination click handler
+            paginationEl.querySelectorAll('button[data-page]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentPage = parseInt(btn.dataset.page);
+                    renderReviews();
+                    // Scroll to top of reviews
+                    document.querySelector('.reviews-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
+        }
+
+        function getStars(n) {
+            return '★'.repeat(n) + '☆'.repeat(5 - n);
+        }
+
+        function escapeHtml(str) {
+            const d = document.createElement('div');
+            d.textContent = str;
+            return d.innerHTML;
+        }
+
+        // Filter tabs
+        document.getElementById('filterTabs').addEventListener('click', (e) => {
+            const tab = e.target.closest('.filter-tab');
+            if (!tab) return;
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentFilter = tab.dataset.filter;
+            currentPage = 1;
+            renderReviews();
+        });
+
+        // Refresh
+        document.getElementById('refreshBtn').addEventListener('click', () => {
+            document.getElementById('reviewsList').innerHTML = '<div style="padding:24px;text-align:center;color:var(--neutral-600);">Refreshing…</div>';
+            fetchReviews();
+        });
+
+        // Init
+        fetchReviews();
+    </script>
     <script src="ai-assistant.js"></script>
 </body>
 
