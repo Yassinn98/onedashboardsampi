@@ -478,6 +478,19 @@
             color: var(--neutral-600);
         }
 
+        /* Unified severity badges */
+        .badge-fatal {
+            background: var(--vodafone-red-light);
+            color: var(--vodafone-red);
+            font-weight: 600;
+        }
+
+        .badge-nonfatal {
+            background: var(--neutral-100);
+            color: var(--neutral-700);
+            font-weight: 600;
+        }
+
         .stack-trace {
             background: var(--neutral-900);
             color: #00FF00;
@@ -489,6 +502,63 @@
             max-height: 300px;
             overflow-y: auto;
             margin-top: var(--spacing-sm);
+        }
+
+        .detail-block {
+            background: var(--neutral-50);
+            border: 1px solid var(--neutral-200);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .detail-table,
+        .stack-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .detail-table th,
+        .detail-table td,
+        .stack-table th,
+        .stack-table td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .detail-table th,
+        .stack-table th {
+            width: 180px;
+            font-weight: 600;
+            color: var(--neutral-600);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            font-size: 12px;
+        }
+
+        .stack-table th {
+            width: auto;
+        }
+
+        .stack-table td {
+            font-family: 'Courier New', monospace;
+            color: var(--neutral-900);
+        }
+
+        .stack-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .stack-table {
+            min-width: 800px;
+        }
+
+        .stack-table th,
+        .stack-table td {
+            white-space: nowrap;
         }
 
         .modal {
@@ -732,10 +802,8 @@
                         <label for="severity">Severity</label>
                         <select id="severity">
                             <option value="all">All Severities</option>
-                            <option value="critical">Critical</option>
-                            <option value="high">High</option>
-                            <option value="medium">Medium</option>
-                            <option value="low">Low</option>
+                            <option value="fatal">Fatal</option>
+                            <option value="non-fatal">Non-fatal</option>
                         </select>
                     </div>
                 </div>
@@ -795,67 +863,67 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr onclick="showCrashDetail(0)">
+                        <tr onclick="showCrashDetail(0)" data-platform="Android" data-appversion="v2.1.0" data-severity="fatal">
                             <td>
                                 <div class="error-message">NullPointerException in MainActivity.onCreate()</div>
                                 <div class="error-type">java.lang.NullPointerException</div>
                             </td>
-                            <td><span class="badge badge-critical">Critical</span></td>
+                            <td><span class="badge badge-fatal">Fatal</span></td>
                             <td>342</td>
                             <td>298</td>
                             <td>Android</td>
                             <td>2 hours ago</td>
                         </tr>
-                        <tr onclick="showCrashDetail(1)">
+                        <tr onclick="showCrashDetail(1)" data-platform="iOS" data-appversion="v2.0.8" data-severity="non-fatal">
                             <td>
                                 <div class="error-message">Network timeout in API call</div>
                                 <div class="error-type">NetworkException</div>
                             </td>
-                            <td><span class="badge badge-high">High</span></td>
+                            <td><span class="badge badge-nonfatal">Non-fatal</span></td>
                             <td>215</td>
                             <td>189</td>
                             <td>iOS</td>
                             <td>5 hours ago</td>
                         </tr>
-                        <tr onclick="showCrashDetail(2)">
+                        <tr onclick="showCrashDetail(2)" data-platform="Android" data-appversion="v2.0.7" data-severity="non-fatal">
                             <td>
                                 <div class="error-message">IndexOutOfBoundsException in ListView adapter</div>
                                 <div class="error-type">java.lang.IndexOutOfBoundsException</div>
                             </td>
-                            <td><span class="badge badge-high">High</span></td>
+                            <td><span class="badge badge-nonfatal">Non-fatal</span></td>
                             <td>178</td>
                             <td>156</td>
                             <td>Android</td>
                             <td>1 day ago</td>
                         </tr>
-                        <tr onclick="showCrashDetail(3)">
+                        <tr onclick="showCrashDetail(3)" data-platform="iOS" data-appversion="v2.1.0" data-severity="non-fatal">
                             <td>
                                 <div class="error-message">Memory warning - app terminated</div>
                                 <div class="error-type">MemoryWarning</div>
                             </td>
-                            <td><span class="badge badge-medium">Medium</span></td>
+                            <td><span class="badge badge-nonfatal">Non-fatal</span></td>
                             <td>124</td>
                             <td>98</td>
                             <td>iOS</td>
                             <td>1 day ago</td>
                         </tr>
-                        <tr onclick="showCrashDetail(4)">
+                        <tr onclick="showCrashDetail(4)" data-platform="Android" data-appversion="v2.1.0" data-severity="non-fatal">
                             <td>
                                 <div class="error-message">Database query failed</div>
                                 <div class="error-type">SQLiteException</div>
                             </td>
-                            <td><span class="badge badge-medium">Medium</span></td>
+                            <td><span class="badge badge-nonfatal">Non-fatal</span></td>
                             <td>89</td>
                             <td>67</td>
                             <td>Android</td>
                             <td>2 days ago</td>
                         </tr>
-                        <tr onclick="showCrashDetail(5)">
+                        <tr onclick="showCrashDetail(5)" data-platform="iOS" data-appversion="v2.0.7" data-severity="non-fatal">
                             <td>
                                 <div class="error-message">Image loading failed</div>
                                 <div class="error-type">ImageLoadException</div>
                             </td>
-                            <td><span class="badge badge-low">Low</span></td>
+                            <td><span class="badge badge-nonfatal">Non-fatal</span></td>
                             <td>56</td>
                             <td>45</td>
                             <td>iOS</td>
@@ -878,6 +946,11 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title" id="modalTitle">Crash Details</h2>
+                <div style="display:flex; align-items:center; gap:12px; margin-left:16px;">
+                    <button id="prevBtn" class="btn btn-outline" style="padding:6px 10px; font-size:14px;" onclick="prevOccurrence()">← Prev</button>
+                    <span id="occIndicator" style="font-size:13px; color:var(--neutral-600)">1 / 1</span>
+                    <button id="nextBtn" class="btn btn-outline" style="padding:6px 10px; font-size:14px;" onclick="nextOccurrence()">Next →</button>
+                </div>
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
@@ -894,30 +967,370 @@
             return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         });
 
-        const stackTraces = [
-            `java.lang.NullPointerException: Attempt to invoke virtual method 'void android.widget.TextView.setText(java.lang.CharSequence)' on a null object reference
+        const crashDetails = [
+            {
+                occurrences: [
+                    {
+                        title: 'NullPointerException in MainActivity.onCreate()',
+                        exceptionName: 'java.lang.NullPointerException',
+                        exceptionCodeName: 'NullPointerException',
+                        sessionId: 'sess-9f72a5',
+                        application: { orientation: 'Portrait', currentView: 'MainActivity' },
+                        device: {
+                            model: 'Pixel 6',
+                            machine: 'Google Pixel 6',
+                            cpu: 'ARM64',
+                            osBuildVersion: 'RQ3A.230705.001',
+                            osDisplayVersion: 'Android 14',
+                            memoryTotal: '12 GB',
+                            memoryUsed: '10.6 GB',
+                            storageTotal: '128 GB',
+                            storageUsed: '94 GB'
+                        },
+                        thread: {
+                            id: 1,
+                            name: 'main',
+                            crashed: true,
+                            main: true
+                        },
+                        stackFrames: [
+                            { address: '0x7fffa1c3', symbol: 'MainActivity.onCreate', index: 0, library: 'app.so', offset: '0x1c3', crashed: true, isAppLibrary: true },
+                            { address: '0x7fffa2d0', symbol: 'Activity.performCreate', index: 1, library: 'framework.so', offset: '0x2d0', crashed: false, isAppLibrary: false },
+                            { address: '0x7fffa3b8', symbol: 'Instrumentation.callActivityOnCreate', index: 2, library: 'framework.so', offset: '0x3b8', crashed: false, isAppLibrary: false },
+                            { address: '0x7fffa4a4', symbol: 'ActivityThread.performLaunchActivity', index: 3, library: 'framework.so', offset: '0x4a4', crashed: false, isAppLibrary: false }
+                        ],
+                        stackSummary: `java.lang.NullPointerException: Attempt to invoke virtual method 'void android.widget.TextView.setText(java.lang.CharSequence)' on a null object reference
     at com.vodafone.app.MainActivity.onCreate(MainActivity.java:47)
     at android.app.Activity.performCreate(Activity.java:7136)
     at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1271)
-    at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2893)`,
-            `NetworkException: Connection timeout after 30000ms
+    at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2893)`
+                    },
+                    {
+                        title: 'NullPointerException in MainActivity.onCreate() (occurrence 2)',
+                        exceptionName: 'java.lang.NullPointerException',
+                        exceptionCodeName: 'NullPointerException',
+                        sessionId: 'sess-9f72b6',
+                        application: { orientation: 'Portrait', currentView: 'MainActivity' },
+                        device: { model: 'Pixel 6', machine: 'Google Pixel 6', cpu: 'ARM64', osBuildVersion: 'RQ3A.230705.001', osDisplayVersion: 'Android 14', memoryTotal: '12 GB', memoryUsed: '10.1 GB', storageTotal: '128 GB', storageUsed: '95 GB' },
+                        thread: { id: 4, name: 'main', crashed: true, main: true },
+                        stackFrames: [ { address: '0x7fffa1d4', symbol: 'MainActivity.onCreate', index: 0, library: 'app.so', offset: '0x1d4', crashed: true, isAppLibrary: true } ],
+                        stackSummary: `java.lang.NullPointerException: Attempt to invoke virtual method on a null object reference\n    at com.vodafone.app.MainActivity.onCreate(MainActivity.java:48)`
+                    }
+                ]
+            },
+            {
+                occurrences: [
+                    {
+                        title: 'Network timeout in API call',
+                        exceptionName: 'NetworkException',
+                        exceptionCodeName: 'ETIMEDOUT',
+                        sessionId: 'sess-73f2b1',
+                        application: { orientation: 'Landscape', currentView: 'UserProfileView' },
+                        device: {
+                            model: 'iPhone 14 Pro',
+                            machine: 'iPhone15,3',
+                            cpu: 'Apple A16',
+                            osBuildVersion: '18.5.1',
+                            osDisplayVersion: 'iOS 18.5.1',
+                            memoryTotal: '6 GB',
+                            memoryUsed: '4.2 GB',
+                            storageTotal: '256 GB',
+                            storageUsed: '198 GB'
+                        },
+                        thread: {
+                            id: 5,
+                            name: 'NetworkThread',
+                            crashed: true,
+                            main: false
+                        },
+                        stackFrames: [
+                            { address: '0x0000000100a3c4f8', symbol: 'ApiClient.makeRequest', index: 0, library: 'VodafoneApp', offset: '0x2d0', crashed: true, isAppLibrary: true },
+                            { address: '0x0000000100b1e2a0', symbol: 'DataService.fetchUserData', index: 1, library: 'VodafoneApp', offset: '0x1f0', crashed: false, isAppLibrary: true },
+                            { address: '0x0000000100c6f140', symbol: 'UserViewModel.loadData', index: 2, library: 'VodafoneApp', offset: '0x310', crashed: false, isAppLibrary: true }
+                        ],
+                        stackSummary: `NetworkException: Connection timeout after 30000ms
     at com.vodafone.app.network.ApiClient.makeRequest(ApiClient.java:124)
     at com.vodafone.app.services.DataService.fetchUserData(DataService.java:56)
-    at com.vodafone.app.viewmodels.UserViewModel.loadData(UserViewModel.java:89)`,
-            `java.lang.IndexOutOfBoundsException: Index: 5, Size: 3
+    at com.vodafone.app.viewmodels.UserViewModel.loadData(UserViewModel.java:89)`
+                    }
+                ]
+            },
+            {
+                occurrences: [
+                    {
+                        title: 'IndexOutOfBoundsException in ListView adapter',
+                        exceptionName: 'java.lang.IndexOutOfBoundsException',
+                        exceptionCodeName: 'IndexOutOfBoundsException',
+                        sessionId: 'sess-8c3a4d',
+                        application: { orientation: 'Portrait', currentView: 'ListViewAdapter' },
+                        device: {
+                            model: 'Galaxy S23',
+                            machine: 'SM-S911B',
+                            cpu: 'Exynos 2200',
+                            osBuildVersion: 'TP1A.220905.003',
+                            osDisplayVersion: 'Android 14',
+                            memoryTotal: '12 GB',
+                            memoryUsed: '9.1 GB',
+                            storageTotal: '256 GB',
+                            storageUsed: '187 GB'
+                        },
+                        thread: {
+                            id: 3,
+                            name: 'main',
+                            crashed: true,
+                            main: true
+                        },
+                        stackFrames: [
+                            { address: '0x7ffc1234', symbol: 'ArrayList.get', index: 0, library: 'libjava.so', offset: '0x1b8', crashed: true, isAppLibrary: false },
+                            { address: '0x7ffc1278', symbol: 'ListAdapter.getView', index: 1, library: 'VodafoneApp', offset: '0x4e', crashed: false, isAppLibrary: true },
+                            { address: '0x7ffc12bc', symbol: 'AbsListView.obtainView', index: 2, library: 'framework.so', offset: '0x3a6', crashed: false, isAppLibrary: false }
+                        ],
+                        stackSummary: `java.lang.IndexOutOfBoundsException: Index: 5, Size: 3
     at java.util.ArrayList.get(ArrayList.java:437)
     at com.vodafone.app.adapters.ListAdapter.getView(ListAdapter.java:78)
-    at android.widget.AbsListView.obtainView(AbsListView.java:2346)`,
-            `MemoryWarning: Received memory warning. Level=2
+    at android.widget.AbsListView.obtainView(AbsListView.java:2346)`
+                    }
+                ]
+            },
+            {
+                occurrences: [
+                    {
+                        title: 'Memory warning - app terminated',
+                        exceptionName: 'MemoryWarning',
+                        exceptionCodeName: 'APP_TERMINATED',
+                        sessionId: 'sess-5d9f24',
+                        application: { orientation: 'Portrait', currentView: 'MainActivity' },
+                        device: {
+                            model: 'iPad Air',
+                            machine: 'iPad14,1',
+                            cpu: 'Apple M1',
+                            osBuildVersion: '18.4.0',
+                            osDisplayVersion: 'iOS 18.4.0',
+                            memoryTotal: '8 GB',
+                            memoryUsed: '7.7 GB',
+                            storageTotal: '128 GB',
+                            storageUsed: '110 GB'
+                        },
+                        thread: {
+                            id: 1,
+                            name: 'main',
+                            crashed: true,
+                            main: true
+                        },
+                        stackFrames: [
+                            { address: '0x000000010050d9c0', symbol: 'ImageCache.clearCache', index: 0, library: 'VodafoneApp', offset: '0x91', crashed: true, isAppLibrary: true },
+                            { address: '0x000000010050dc60', symbol: 'MainActivity.onLowMemory', index: 1, library: 'VodafoneApp', offset: '0x234', crashed: false, isAppLibrary: true }
+                        ],
+                        stackSummary: `MemoryWarning: Received memory warning. Level=2
     at com.vodafone.app.utils.ImageCache.clearCache(ImageCache.java:145)
-    at com.vodafone.app.MainActivity.onLowMemory(MainActivity.java:234)`,
-            `android.database.sqlite.SQLiteException: no such table: users (code 1)
+    at com.vodafone.app.MainActivity.onLowMemory(MainActivity.java:234)`
+                    }
+                ]
+            },
+            {
+                occurrences: [
+                    {
+                        title: 'Database query failed',
+                        exceptionName: 'android.database.sqlite.SQLiteException',
+                        exceptionCodeName: 'SQLiteException',
+                        sessionId: 'sess-4b7e9a',
+                        application: { orientation: 'Portrait', currentView: 'DatabaseService' },
+                        device: {
+                            model: 'Pixel 7',
+                            machine: 'Google Pixel 7',
+                            cpu: 'ARM64',
+                            osBuildVersion: 'TP1A.230905.003',
+                            osDisplayVersion: 'Android 14',
+                            memoryTotal: '8 GB',
+                            memoryUsed: '6.4 GB',
+                            storageTotal: '128 GB',
+                            storageUsed: '77 GB'
+                        },
+                        thread: {
+                            id: 2,
+                            name: 'db-worker',
+                            crashed: true,
+                            main: false
+                        },
+                        stackFrames: [
+                            { address: '0x7ffa7a88', symbol: 'SQLiteConnection.nativeExecuteForChangedRowCount', index: 0, library: 'libsqlite.so', offset: '0x0', crashed: true, isAppLibrary: false },
+                            { address: '0x7ffa7b2c', symbol: 'UserDao.insert', index: 1, library: 'VodafoneApp', offset: '0x43', crashed: false, isAppLibrary: true }
+                        ],
+                        stackSummary: `android.database.sqlite.SQLiteException: no such table: users (code 1)
     at android.database.sqlite.SQLiteConnection.nativeExecuteForChangedRowCount(Native Method)
-    at com.vodafone.app.database.UserDao.insert(UserDao.java:67)`,
-            `ImageLoadException: Failed to decode image
+    at com.vodafone.app.database.UserDao.insert(UserDao.java:67)`
+                    }
+                ]
+            },
+            {
+                occurrences: [
+                    {
+                        title: 'Image loading failed',
+                        exceptionName: 'ImageLoadException',
+                        exceptionCodeName: 'IMAGE_DECODE_FAILURE',
+                        sessionId: 'sess-2a8f31',
+                        application: { orientation: 'Landscape', currentView: 'ProfileView' },
+                        device: {
+                            model: 'iPhone 13',
+                            machine: 'iPhone14,2',
+                            cpu: 'Apple A15',
+                            osBuildVersion: '17.3.2',
+                            osDisplayVersion: 'iOS 17.3.2',
+                            memoryTotal: '4 GB',
+                            memoryUsed: '3.5 GB',
+                            storageTotal: '128 GB',
+                            storageUsed: '89 GB'
+                        },
+                        thread: {
+                            id: 1,
+                            name: 'main',
+                            crashed: true,
+                            main: true
+                        },
+                        stackFrames: [
+                            { address: '0x00000001002a8d14', symbol: 'ImageLoader.loadBitmap', index: 0, library: 'VodafoneApp', offset: '0x89', crashed: true, isAppLibrary: true },
+                            { address: '0x00000001002a8f74', symbol: 'ProfileView.setAvatar', index: 1, library: 'VodafoneApp', offset: '0x123', crashed: false, isAppLibrary: true }
+                        ],
+                        stackSummary: `ImageLoadException: Failed to decode image
     at com.vodafone.app.utils.ImageLoader.loadBitmap(ImageLoader.java:89)
     at com.vodafone.app.views.ProfileView.setAvatar(ProfileView.java:123)`
+                    }
+                ]
+            }
         ];
+
+        function renderCrashDetailFields(detail) {
+            return `
+                <div class="detail-block">
+                    <table class="detail-table">
+                        <tbody>
+                            <tr><th>Exception Name</th><td>${detail.exceptionName}</td></tr>
+                            <tr><th>Exception Code</th><td>${detail.exceptionCodeName}</td></tr>
+                            <tr><th>Session ID</th><td>${detail.sessionId}</td></tr>
+                            <tr><th>App Orientation</th><td>${detail.application.orientation}</td></tr>
+                            <tr><th>Current View</th><td>${detail.application.currentView}</td></tr>
+                            <tr><th>Device Model</th><td>${detail.device.model}</td></tr>
+                            <tr><th>Device Machine</th><td>${detail.device.machine}</td></tr>
+                            <tr><th>CPU</th><td>${detail.device.cpu}</td></tr>
+                            <tr><th>OS Build</th><td>${detail.device.osBuildVersion}</td></tr>
+                            <tr><th>OS Display Version</th><td>${detail.device.osDisplayVersion}</td></tr>
+                            <tr><th>Total Memory</th><td>${detail.device.memoryTotal}</td></tr>
+                            <tr><th>Memory Used</th><td>${detail.device.memoryUsed}</td></tr>
+                            <tr><th>Total Storage</th><td>${detail.device.storageTotal}</td></tr>
+                            <tr><th>Storage Used</th><td>${detail.device.storageUsed}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="detail-block">
+                    <table class="detail-table">
+                        <tbody>
+                            <tr><th>Thread ID</th><td>${detail.thread.id}</td></tr>
+                            <tr><th>Thread Name</th><td>${detail.thread.name}</td></tr>
+                            <tr><th>Thread Crashed</th><td>${detail.thread.crashed ? 'Yes' : 'No'}</td></tr>
+                            <tr><th>Thread Main</th><td>${detail.thread.main ? 'Yes' : 'No'}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderStackFrames(frames) {
+            return `
+                <div class="detail-block">
+                    <div class="stack-table-wrapper">
+                        <table class="stack-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Address</th>
+                                    <th>Symbol</th>
+                                    <th>Index</th>
+                                    <th>Library</th>
+                                    <th>Offset</th>
+                                    <th>App Library</th>
+                                    <th>Crashed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${frames.map(frame => `
+                                    <tr>
+                                        <td>${frame.index}</td>
+                                        <td>${frame.address}</td>
+                                        <td>${frame.symbol}</td>
+                                        <td>${frame.index}</td>
+                                        <td>${frame.library}</td>
+                                        <td>${frame.offset}</td>
+                                        <td>${frame.isAppLibrary ? 'Yes' : 'No'}</td>
+                                        <td>${frame.crashed ? 'Yes' : 'No'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        let currentGroup = 0;
+        let currentOcc = 0;
+
+        function showCrashDetail(groupIndex, occIndex = 0) {
+            currentGroup = groupIndex;
+            currentOcc = occIndex;
+            renderCurrentDetail();
+            document.getElementById('crashModal').classList.add('show');
+        }
+
+        function renderCurrentDetail() {
+            const content = document.getElementById('modalContent');
+            const group = crashDetails[currentGroup];
+            const occurrences = group.occurrences || [group];
+            const detail = occurrences[currentOcc];
+
+            document.getElementById('modalTitle').textContent = detail.title;
+            updateIndicator();
+            content.innerHTML = `
+                <h3 style="margin-bottom: 16px;">Crash Summary</h3>
+                ${renderCrashDetailFields(detail)}
+                <h3 style="margin: 24px 0 16px 0;">Stack Trace</h3>
+                <div class="stack-trace">${detail.stackSummary}</div>
+                <h3 style="margin: 24px 0 16px 0;">Stack Frame Details</h3>
+                ${renderStackFrames(detail.stackFrames)}
+            `;
+        }
+
+        function updateIndicator() {
+            const occCount = (crashDetails[currentGroup].occurrences || []).length || 1;
+            const indicator = document.getElementById('occIndicator');
+            if (indicator) indicator.textContent = `${currentOcc + 1} / ${occCount}`;
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            if (prevBtn) prevBtn.disabled = currentOcc === 0;
+            if (nextBtn) nextBtn.disabled = currentOcc >= occCount - 1;
+        }
+
+        function prevOccurrence() {
+            if (currentOcc > 0) {
+                currentOcc -= 1;
+                renderCurrentDetail();
+            }
+        }
+
+        function nextOccurrence() {
+            const occCount = (crashDetails[currentGroup].occurrences || []).length || 1;
+            if (currentOcc < occCount - 1) {
+                currentOcc += 1;
+                renderCurrentDetail();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('crashModal').classList.remove('show');
+        }
+
+        document.getElementById('crashModal').addEventListener('click', function (e) {
+            if (e.target === this) closeModal();
+        });
 
         new Chart(document.getElementById('crashTrendChart'), {
             type: 'line',
@@ -952,11 +1365,28 @@
         });
 
         function applyFilters() {
-            console.log('Filters applied');
+            const platform = document.getElementById('platform').value;
+            const appVersion = document.getElementById('appVersion').value;
+            const severity = document.getElementById('severity').value;
+
+            const rows = document.querySelectorAll('.table-container tbody tr');
+            rows.forEach(row => {
+                const rowPlatform = (row.getAttribute('data-platform') || '').toLowerCase();
+                const rowApp = row.getAttribute('data-appversion') || '';
+                const rowSeverity = (row.getAttribute('data-severity') || 'non-fatal').toLowerCase();
+
+                let visible = true;
+                if (platform !== 'all' && rowPlatform !== platform.toLowerCase()) visible = false;
+                if (appVersion !== 'all' && rowApp !== appVersion) visible = false;
+                if (severity !== 'all' && rowSeverity !== severity) visible = false;
+
+                row.style.display = visible ? '' : 'none';
+            });
+
             const btn = document.querySelector('.btn-success');
             const orig = btn.innerHTML;
             btn.innerHTML = '<span>✓</span> Applied!';
-            setTimeout(() => btn.innerHTML = orig, 1500);
+            setTimeout(() => btn.innerHTML = orig, 1000);
         }
 
         function resetFilters() {
@@ -967,49 +1397,6 @@
             document.getElementById('severity').value = 'all';
             applyFilters();
         }
-
-        function showCrashDetail(index) {
-            const modal = document.getElementById('crashModal');
-            const content = document.getElementById('modalContent');
-            const titles = [
-                'NullPointerException in MainActivity.onCreate()',
-                'Network timeout in API call',
-                'IndexOutOfBoundsException in ListView adapter',
-                'Memory warning - app terminated',
-                'Database query failed',
-                'Image loading failed'
-            ];
-
-            document.getElementById('modalTitle').textContent = titles[index];
-            content.innerHTML = `
-                <h3 style="margin-bottom: 16px;">Stack Trace</h3>
-                <div class="stack-trace">${stackTraces[index]}</div>
-                <h3 style="margin: 24px 0 16px 0;">User Steps (Last 10)</h3>
-                <div style="background: var(--neutral-50); border: 1px solid var(--neutral-200); border-radius: 6px; padding: 16px;">
-                    <ol style="padding-left: 20px; line-height: 1.8; font-size: 14px;">
-                        <li>User logged in</li>
-                        <li>Navigated to Dashboard</li>
-                        <li>Clicked on Crash Reporting</li>
-                        <li>Scrolled through crash groups</li>
-                        <li>Filtered by critical severity</li>
-                        <li>Clicked on NullPointerException item</li>
-                        <li>Viewed stack trace</li>
-                        <li>Attempted to copy error log</li>
-                        <li>Network request initiated</li>
-                        <li style="color: var(--vodafone-red); font-weight: 600;">App crashed with error</li>
-                    </ol>
-                </div>
-            `;
-            modal.classList.add('show');
-        }
-
-        function closeModal() {
-            document.getElementById('crashModal').classList.remove('show');
-        }
-
-        document.getElementById('crashModal').addEventListener('click', function (e) {
-            if (e.target === this) closeModal();
-        });
     </script>
     <script src="ai-assistant.js"></script>
 </body>
