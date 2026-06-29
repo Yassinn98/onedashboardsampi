@@ -1,0 +1,131 @@
+# PRD: Crash Details Full-Page Experience
+
+## 1. Product Summary
+The crash reporting experience should allow a user to select a crash from the crash list and view its complete details in a dedicated full-page experience. The selected crash details should be presented in a structured layout that includes exception information, application context, device context, and thread-level diagnostics.
+
+## 2. Problem Statement
+Users need to investigate crash incidents in detail, including the underlying exception, environment context, and thread stack traces. A full-page details view will provide a clearer and more focused experience than an inline or overlay-based interaction.
+
+## 3. Goals
+- Provide a dedicated crash details page for each selected crash.
+- Present all relevant crash data in a clear, structured, and readable format.
+- Support navigation back to the crash list.
+- Support navigation between crash occurrences for the same crash group.
+- Make thread diagnostics easier to inspect through expandable sections.
+
+## 4. User Stories
+- As a product analyst, I want to open a crash from the crash list so that I can inspect its complete details.
+- As a support engineer, I want to view app and device context so that I can understand the environment of the crash.
+- As a developer, I want to inspect thread stack traces so that I can identify the root cause.
+- As a user, I want to return to the crash list easily so that I can continue investigating other issues.
+
+## 5. Functional Requirements
+### 5.1 Crash Selection
+- Selecting a crash from the crash list opens a dedicated details page.
+- The page should replace the main crash list view while the details are being displayed.
+- The user should be able to return to the crash list through a clearly labeled action.
+
+### 5.2 Crash Header
+The details page must display:
+- Crash title
+- Crash severity
+- Crash occurrence count and current occurrence position
+- Back button
+- Previous/Next occurrence navigation
+
+### 5.3 Crash Summary
+The details page must show:
+- Exception name
+- Exception code
+- Session ID
+- Crash title
+- Stack summary
+
+### 5.4 Application Context
+The details page must display:
+- App orientation
+- Current view/screen name
+
+### 5.5 Device Context
+The details page must display:
+- Device model
+- Device machine
+- CPU
+- OS build version
+- OS display version
+- Total memory
+- Memory used
+- Total storage
+- Storage used
+
+### 5.6 Thread Details
+The details page must display all available threads for the crash.
+Each thread must show:
+- Thread name
+- Thread ID
+- Whether it is the main thread
+- Whether it crashed
+- Status label: Active or Crashed
+
+Each thread must be expandable/collapsible.
+By default, all thread sections should be collapsed.
+When expanded, each thread must display:
+- Stack summary
+- Stack frames table
+
+### 5.7 Stack Frames
+Each thread’s stack frames table must include:
+- Frame index
+- Module/library
+- Function/symbol
+- Address
+- Offset
+- Crash indicator
+
+The crashed frame should be visually highlighted.
+
+## 6. Data Requirements
+The data team must provide the following fields for each crash detail:
+- exceptionName
+- exceptionCodeName
+- title
+- sessionId
+- application.orientation
+- application.currentView
+- device.model
+- device.machine
+- device.cpu
+- device.osBuildVersion
+- device.osDisplayVersion
+- device.memoryTotal
+- device.memoryUsed
+- device.storageTotal
+- device.storageUsed
+- thread.id
+- thread.name
+- thread.crashed
+- thread.main
+- threads[]
+- stackSummary
+- stackFrames[] with index, library, symbol, address, offset, crashed
+
+## 7. UI/UX Requirements
+- The details experience should feel like a dedicated page, not an overlay.
+- The layout should be structured and easy to scan.
+- The interface should use the existing product styling and color palette.
+- Crash-relevant states should use the existing red accent styling.
+- Expand/collapse controls should be clear and intuitive.
+
+## 8. Accessibility Requirements
+- All navigation controls must be keyboard accessible.
+- Focus states must be visible.
+- Expand/collapse controls must be operable without a mouse.
+- Color contrast must meet accessibility standards.
+
+## 9. Acceptance Criteria
+- Clicking a crash from the list opens a dedicated details page.
+- The page contains exception, application, device, and thread information.
+- The user can return to the crash list.
+- The user can navigate between crash occurrences.
+- Threads are collapsible and collapsed by default.
+- All required data is rendered correctly from the provided payload.
